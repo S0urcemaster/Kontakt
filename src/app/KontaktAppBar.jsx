@@ -7,6 +7,18 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
 import React from "react";
 import {makeStyles} from "@material-ui/core/styles";
+import Typography from "@material-ui/core/Typography";
+import Avatar from "@material-ui/core/Avatar";
+import Popper from "@material-ui/core/Popper";
+import Grow from "@material-ui/core/Grow";
+import Paper from "@material-ui/core/Paper";
+import MenuList from "@material-ui/core/MenuList";
+import MenuItem from "@material-ui/core/MenuItem";
+import ClickAwayListener from "@material-ui/core/ClickAwayListener";
+import Link from "@material-ui/core/Link";
+import {useHistory} from "react-router";
+import {Box} from "@material-ui/core";
+import Card from "@material-ui/core/Card";
 
 export const drawerWidth = 240;
 
@@ -37,20 +49,66 @@ const useStyles = makeStyles((theme) => ({
     textField: {
         marginLeft: theme.spacing(1),
         marginRight: theme.spacing(1),
-        width: '25ch',
+        width: '35ch',
     },
     search: {
         background: 'white',
-        marginRight: '10px'
+        marginRight: '10px',
+        width: '300px'
+    },
+    account: {
+        color: 'black',
+        flexGrow: 1,
+    },
+    paper: {
+        marginRight: theme.spacing(2),
     },
 }));
 
 export default function KontaktAppBar (props) {
-    const classes = useStyles();
+    const classes = useStyles()
+    const [drawerOpen, setDrawerOpen] = React.useState(false)
+    const [activeAccount, setActiveAccount] = React.useState(null)
+    const anchorRef = React.useRef(null)
+    const history = useHistory()
 
     const handleDrawerOpen = () => {
-        props.opened();
-    };
+        props.opened()
+    }
+
+    const handleToggle = () => {
+        setDrawerOpen((prevOpen) => !prevOpen)
+    }
+
+    const handleClose = (event) => {
+        if (anchorRef.current && anchorRef.current.contains(event.target)) {
+            return
+        }
+
+        setDrawerOpen(false)
+    }
+
+    function handleListKeyDown(event) {
+        if (event.key === 'Tab') {
+            event.preventDefault()
+            setDrawerOpen(false)
+        }
+    }
+
+    function accountSelected(event, newValue) {
+        setActiveAccount(newValue)
+        history.push("/account")
+    }
+
+    // return focus to the button when we transitioned from !open -> open
+    const prevOpen = React.useRef(drawerOpen)
+    React.useEffect(() => {
+        if (prevOpen.current === true && drawerOpen === false) {
+            anchorRef.current.focus()
+        }
+
+        prevOpen.current = drawerOpen
+    }, [drawerOpen]);
 
     return (
         <AppBar
@@ -74,9 +132,10 @@ export default function KontaktAppBar (props) {
                 </IconButton>
                 <Autocomplete
                     className={classes.search}
-                    id="custom-input-demo"
+                    id="accountSearch"
                     options={top100Films}
                     getOptionLabel={(option) => option.title}
+                    onChange={accountSelected}
                     renderInput={(params) => (
                         <div ref={params.InputProps.ref}>
                             <TextField
@@ -92,7 +151,7 @@ export default function KontaktAppBar (props) {
                 />
                 <Autocomplete
                     className={classes.search}
-                    id="custom-input-demo"
+                    id="contactSearch"
                     options={top100Films}
                     getOptionLabel={(option) => option.title}
                     renderInput={(params) => (
@@ -108,6 +167,40 @@ export default function KontaktAppBar (props) {
                         </div>
                     )}
                 />
+                <Box style={{flexGrow:1}}>
+                    <Typography className={classes.account}>
+                        {activeAccount ? activeAccount.title : "Mercedes Benz AG Stuttgart, Dieter Zetsche"}
+                    </Typography>
+                    <Typography className={classes.account}>
+                        {activeAccount ? "Jahr: "+activeAccount.year : "0711 25935414, dieter-zetsche@daimler-benz-ag.com"}
+                    </Typography>
+                </Box>
+                <div>
+                    <Link href="#" onClick={() => handleToggle()}>
+                        <Avatar src="/broken-image.jpg"
+                                ref={anchorRef}/>
+                    </Link>
+                    <Popper open={drawerOpen} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
+                        {({ TransitionProps, placement }) => (
+                            <Grow
+                                {...TransitionProps}
+                                style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
+                            >
+                                <Paper>
+                                    <ClickAwayListener onClickAway={handleClose}>
+                                        <MenuList autoFocusItem={drawerOpen} id="menu-list-grow" onKeyDown={handleListKeyDown}>
+                                            <MenuItem onClick={handleClose}>Profil</MenuItem>
+                                            <MenuItem onClick={handleClose}>Einstellungen</MenuItem>
+                                            <MenuItem onClick={handleClose}>Benutzerverwaltung</MenuItem>
+                                            <MenuItem onClick={handleClose}>Lizenz</MenuItem>
+                                            <MenuItem onClick={handleClose}>Logout</MenuItem>
+                                        </MenuList>
+                                    </ClickAwayListener>
+                                </Paper>
+                            </Grow>
+                        )}
+                    </Popper>
+                </div>
             </Toolbar>
         </AppBar>
     )
