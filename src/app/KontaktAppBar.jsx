@@ -19,6 +19,7 @@ import Link from "@material-ui/core/Link";
 import {useHistory} from "react-router";
 import {Box} from "@material-ui/core";
 import Card from "@material-ui/core/Card";
+import Button from "@material-ui/core/Button";
 
 export const drawerWidth = 240;
 
@@ -63,6 +64,9 @@ const useStyles = makeStyles((theme) => ({
     paper: {
         marginRight: theme.spacing(2),
     },
+    avatarLink: {
+
+    }
 }));
 
 export default function KontaktAppBar (props) {
@@ -86,6 +90,11 @@ export default function KontaktAppBar (props) {
         }
 
         setDrawerOpen(false)
+    }
+
+    const handleLogout = (event) => {
+        handleClose(event)
+        history.push("/login")
     }
 
     function handleListKeyDown(event) {
@@ -176,10 +185,11 @@ export default function KontaktAppBar (props) {
                     </Typography>
                 </Box>
                 <div>
-                    <Link href="#" onClick={() => handleToggle()}>
-                        <Avatar src="/broken-image.jpg"
-                                ref={anchorRef}/>
-                    </Link>
+                    <Avatar src="/broken-image.jpg"
+                            ref={anchorRef}
+                            onClick={() => handleToggle()}
+                            style={{cursor:"pointer"}}
+                    />
                     <Popper open={drawerOpen} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
                         {({ TransitionProps, placement }) => (
                             <Grow
@@ -193,7 +203,7 @@ export default function KontaktAppBar (props) {
                                             <MenuItem onClick={handleClose}>Einstellungen</MenuItem>
                                             <MenuItem onClick={handleClose}>Benutzerverwaltung</MenuItem>
                                             <MenuItem onClick={handleClose}>Lizenz</MenuItem>
-                                            <MenuItem onClick={handleClose}>Logout</MenuItem>
+                                            <MenuItem onClick={handleLogout}>Logout</MenuItem>
                                         </MenuList>
                                     </ClickAwayListener>
                                 </Paper>
