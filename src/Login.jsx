@@ -1,24 +1,22 @@
 import React, {useState} from "react";
-import {Button, FormGroup, FormControl, FormLabel} from "@material-ui/core";
+import {Button, FormControl} from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
-import Card from "@material-ui/core/Card";
 import Typography from "@material-ui/core/Typography";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import {useHistory} from "react-router";
-import IconButton from "@material-ui/core/IconButton";
+
+import {UserContext} from "./index";
 
 export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-
+    // const [user, setUser] = UserContext
     const history = useHistory();
-
-    function validateForm() {
-        return email.length > 0 && password.length > 0;
-    }
+    // const userContext = useContext(UserContext)
 
     function handleSubmit(event) {
+        UserContext.user = {};
         history.push("/")
     }
 

@@ -15,11 +15,8 @@ import Paper from "@material-ui/core/Paper";
 import MenuList from "@material-ui/core/MenuList";
 import MenuItem from "@material-ui/core/MenuItem";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
-import Link from "@material-ui/core/Link";
 import {useHistory} from "react-router";
 import {Box} from "@material-ui/core";
-import Card from "@material-ui/core/Card";
-import Button from "@material-ui/core/Button";
 
 export const drawerWidth = 240;
 
@@ -29,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
         zIndex: theme.zIndex.drawer + 1,
         transition: theme.transitions.create(['width', 'margin'], {
             easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
+            duration: theme.transitions.duration.short,
         }),
     },
     appBarShift: {
@@ -48,14 +45,12 @@ const useStyles = makeStyles((theme) => ({
         display: 'none',
     },
     textField: {
-        marginLeft: theme.spacing(1),
-        marginRight: theme.spacing(1),
-        width: '35ch',
+        width: "intrinsic",
     },
     search: {
         background: 'white',
-        marginRight: '10px',
-        width: '300px'
+        marginRight: '20px',
+        width: '350px'
     },
     account: {
         color: 'black',
@@ -72,9 +67,18 @@ const useStyles = makeStyles((theme) => ({
 export default function KontaktAppBar (props) {
     const classes = useStyles()
     const [drawerOpen, setDrawerOpen] = React.useState(false)
-    const [activeAccount, setActiveAccount] = React.useState(null)
     const anchorRef = React.useRef(null)
     const history = useHistory()
+
+    // return focus to the button when we transitioned from !open -> open
+    const prevOpen = React.useRef(drawerOpen)
+    React.useEffect(() => {
+        if (prevOpen.current === true && drawerOpen === false) {
+            anchorRef.current.focus()
+        }
+
+        prevOpen.current = drawerOpen
+    }, [drawerOpen]);
 
     const handleDrawerOpen = () => {
         props.opened()
@@ -88,11 +92,14 @@ export default function KontaktAppBar (props) {
         if (anchorRef.current && anchorRef.current.contains(event.target)) {
             return
         }
-
         setDrawerOpen(false)
     }
 
-    const handleLogout = (event) => {
+    function accountSearch (event) {
+        props.requireList(event.target.value)
+    }
+
+    const logout = (event) => {
         handleClose(event)
         history.push("/login")
     }
@@ -104,20 +111,20 @@ export default function KontaktAppBar (props) {
         }
     }
 
-    function accountSelected(event, newValue) {
-        setActiveAccount(newValue)
+    function accountSelected(event, account) {
+        props.accountSelected(account)
         history.push("/account")
     }
 
-    // return focus to the button when we transitioned from !open -> open
-    const prevOpen = React.useRef(drawerOpen)
-    React.useEffect(() => {
-        if (prevOpen.current === true && drawerOpen === false) {
-            anchorRef.current.focus()
-        }
+    function activeAccountAddress() {
+        const a = props.activeAccount.addresses[0]
+        return a.street + ', ' + a.countryCode + '-' + a.zip + ' ' + a.town
+    }
 
-        prevOpen.current = drawerOpen
-    }, [drawerOpen]);
+    function gotoUpdateLog(event) {
+        handleClose(event)
+        history.push('/update-log')
+    }
 
     return (
         <AppBar
@@ -142,9 +149,10 @@ export default function KontaktAppBar (props) {
                 <Autocomplete
                     className={classes.search}
                     id="accountSearch"
-                    options={top100Films}
-                    getOptionLabel={(option) => option.title}
+                    options={props.accountSearchList}
+                    getOptionLabel={(option) => option.name}
                     onChange={accountSelected}
+                    onInput={accountSearch}
                     renderInput={(params) => (
                         <div ref={params.InputProps.ref}>
                             <TextField
@@ -177,11 +185,11 @@ export default function KontaktAppBar (props) {
                     )}
                 />
                 <Box style={{flexGrow:1}}>
-                    <Typography className={classes.account}>
-                        {activeAccount ? activeAccount.title : "Mercedes Benz AG Stuttgart, Dieter Zetsche"}
+                    <Typography className={classes.account} variant="body2">
+                        {props.activeAccount ? props.activeAccount.name : "Mercedes Benz AG Stuttgart, Dieter Zetsche"}
                     </Typography>
-                    <Typography className={classes.account}>
-                        {activeAccount ? "Jahr: "+activeAccount.year : "0711 25935414, dieter-zetsche@daimler-benz-ag.com"}
+                    <Typography className={classes.account} variant="body2">
+                        {props.activeAccount ? activeAccountAddress() : "0711 25935414, dieter-zetsche@daimler-benz-ag.com"}
                     </Typography>
                 </Box>
                 <div>
@@ -203,7 +211,8 @@ export default function KontaktAppBar (props) {
                                             <MenuItem onClick={handleClose}>Einstellungen</MenuItem>
                                             <MenuItem onClick={handleClose}>Benutzerverwaltung</MenuItem>
                                             <MenuItem onClick={handleClose}>Lizenz</MenuItem>
-                                            <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                                            <MenuItem onClick={logout}>Logout</MenuItem>
+                                            <MenuItem onClick={gotoUpdateLog}>Update Log</MenuItem>
                                         </MenuList>
                                     </ClickAwayListener>
                                 </Paper>

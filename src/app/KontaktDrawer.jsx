@@ -1,29 +1,20 @@
 import clsx from "clsx";
 import IconButton from "@material-ui/core/IconButton";
-import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import Divider from "@material-ui/core/Divider";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
-import BusinessIcon from "@material-ui/icons/Business";
 import ListItemText from "@material-ui/core/ListItemText";
 import PostAddIcon from "@material-ui/icons/PostAdd";
 import PermPhoneMsgIcon from "@material-ui/icons/PermPhoneMsg";
-import GroupIcon from "@material-ui/icons/Group";
-import SettingsIcon from "@material-ui/icons/Settings";
-import VpnKeyIcon from "@material-ui/icons/VpnKey";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import Drawer from "@material-ui/core/Drawer";
 import React from "react";
 import {makeStyles} from "@material-ui/core/styles";
-import useTheme from "@material-ui/core/styles/useTheme";
 import {Typography} from "@material-ui/core";
-import {Link, Route, Switch} from "react-router-dom";
+import {Route, Switch} from "react-router-dom";
 import {useHistory} from "react-router";
-import Overview from "./content/Overview";
-import Account from "./content/Account";
-//import drawerWidth from "../App";
+import {AccountBox} from "@material-ui/icons";
 
 export const drawerWidth = 240;
 
@@ -63,7 +54,6 @@ const useStyles = makeStyles((theme) => ({
 export default function KontaktDrawer (props) {
     const classes = useStyles();
     const history = useHistory();
-    const theme = useTheme();
 
     const handleDrawerClose = () => {
         props.closed();
@@ -123,38 +113,15 @@ export default function KontaktDrawer (props) {
                     </Route>
                 </Switch>
             </List>
-            {/*<List>*/}
-            {/*    <ListItem button key="users">*/}
-            {/*        <ListItemIcon><GroupIcon /></ListItemIcon>*/}
-            {/*        <ListItemText primary="Benutzer" />*/}
-            {/*    </ListItem>*/}
-            {/*</List>*/}
-            {/*<List>*/}
-            {/*    <ListItem button key="auxiliaryData">*/}
-            {/*        <ListItemIcon><SettingsIcon /></ListItemIcon>*/}
-            {/*        <ListItemText primary="Erweiterte Daten" />*/}
-            {/*    </ListItem>*/}
-            {/*</List>*/}
-            {/*<List>*/}
-            {/*    <ListItem button key="changePassword">*/}
-            {/*        <ListItemIcon><VpnKeyIcon /></ListItemIcon>*/}
-            {/*        <ListItemText primary="Passwort ändern" />*/}
-            {/*    </ListItem>*/}
-            {/*</List>*/}
             <Divider />
             <List>
-                <ListItem button key="customers">
-                    <ListItemIcon><AccountCircleIcon /></ListItemIcon>
-                    <ListItemText primary="Dieter Zetsche" />
-                </ListItem>
-                <ListItem button key="customers">
-                    <ListItemIcon><AccountCircleIcon /></ListItemIcon>
-                    <ListItemText primary="Sebastian Teister" />
-                </ListItem>
-                <ListItem button key="customers">
-                    <ListItemIcon><AccountCircleIcon /></ListItemIcon>
-                    <ListItemText primary="" />
-                </ListItem>
+                {props.accountHistory != null ? props.accountHistory.map((account) =>
+                account ? (
+                    <ListItem button key="customers" onClick={() => props.accountClicked(account)}>
+                        <ListItemIcon><AccountBox /></ListItemIcon>
+                        <ListItemText primary={account.name} />
+                    </ListItem> ) : ""
+                ) : ""}
             </List>
         </Drawer>
     )

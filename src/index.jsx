@@ -5,19 +5,29 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import {BrowserRouter, Route, Switch} from "react-router-dom";
 import Login from "./Login";
+import theme from "./Theme";
+import { ThemeProvider } from '@material-ui/core/styles';
+
+// const [user, setUser] = React.useState(null);
+// export const UserContext = React.createContext({user: null, setUser: () => {}});
+export const UserContext = React.createContext(null);
 
 ReactDOM.render(
   <React.StrictMode>
-      <BrowserRouter basename="/kontakt">
-          <Switch>
-              <Route exact path="/login">
-                  <Login />
-              </Route>
-              <Route path="/">
-                  <App />
-              </Route>
-          </Switch>
-      </BrowserRouter>,
+      <ThemeProvider theme={theme}>
+          <BrowserRouter basename="/kontakt">
+              <UserContext.Provider value={null}>
+                  <Switch>
+                      <Route exact path="/login">
+                          <Login />
+                      </Route>
+                      <Route path="/">
+                          <App />
+                      </Route>
+                  </Switch>
+              </UserContext.Provider>
+          </BrowserRouter>,
+      </ThemeProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );
