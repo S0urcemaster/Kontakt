@@ -1,26 +1,30 @@
 import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
+// import black from '@material-ui/core/colors/'
 
 const theme = createMuiTheme({
+    palette: {
+        // type: 'dark'
+    },
     overrides: {
         MuiTypography: {
             h1: {
-                fontSize: 28,
-                fontWeight: "normal"
-            },
-            h2: {
                 fontSize: 24,
                 fontWeight: "normal"
             },
-            h3: {
+            h2: {
                 fontSize: 22,
                 fontWeight: "normal"
             },
-            h4: {
+            h3: {
                 fontSize: 20,
                 fontWeight: "normal"
             },
-            h5: {
+            h4: {
                 fontSize: 18,
+                fontWeight: "normal"
+            },
+            h5: {
+                fontSize: 17,
                 fontWeight: "normal",
                 fontStyle: "italic"
             },
@@ -45,7 +49,14 @@ const theme = createMuiTheme({
                 fontWeight: "normal"
             },
         },
+        MuiAppBar: {
+            background: 'white',
+            borderBottom: "1px solid lightGray",
+        }
     },
+    drawerWidth: 240,
+    appBarBackground: 'rgba(250, 250, 235, 1)',
+    appBarBorder: "1px solid lightGray",
 });
 
 export default theme

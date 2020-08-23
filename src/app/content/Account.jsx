@@ -2,36 +2,89 @@ import React from "react";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import { makeStyles } from '@material-ui/core/styles';
-import Accordion from "@material-ui/core/Accordion";
-import AccordionSummary from "@material-ui/core/AccordionSummary";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Checkbox from "@material-ui/core/Checkbox";
-import AccordionDetails from "@material-ui/core/AccordionDetails";
 import Typography from "@material-ui/core/Typography";
-import {Box} from "@material-ui/core";
+import {Box, Container, List, ListItem} from "@material-ui/core";
 import {
     MuiPickersUtilsProvider,
     KeyboardDatePicker,
 } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
-import format from 'date-fns/format'
 import TextareaAutosize from "@material-ui/core/TextareaAutosize";
 import Button from "@material-ui/core/Button";
 import moment from "moment";
 import {AccountCircleOutlined, FolderOpen, Timer} from "@material-ui/icons";
+import { withStyles } from '@material-ui/core/styles';
+import MuiAccordion from '@material-ui/core/Accordion';
+import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
+import MuiAccordionDetails from '@material-ui/core/AccordionDetails';
 
 const useStyles = makeStyles((theme) => ({
-    padding: {
-        padding: "20px"
-    },
     formField: {
         width: "100%",
-        paddingBottom: "10px"
     },
-    marginB: {
-        marginBottom: "20px"
+    summaryContent: {
+        // backgroundColor:'rgba(255, 255, 240, 1)',
+        // backgroundColor:'rgba(220, 240, 220, 1)',
+        padding: '5px 10px 5px 10px',
+        width:'100%',
+    },
+    sectionHeader: {
+        backgroundColor:'rgba(250, 248, 245, 1)',
+        padding:'5px 0',
+        borderTop:'1px solid lightgray',
     }
 }))
+
+const Accordion = withStyles({
+    root: {
+        // border: '1px solid rgba(0, 0, 0, .125)',
+        border: 0,
+        boxShadow: 'none',
+        '&:not(:last-child)': {
+            borderBottom: 0,
+        },
+        '&:before': {
+            display: 'none',
+        },
+        '&$expanded': {
+            margin: 'auto',
+        },
+    },
+    expanded: {},
+})(MuiAccordion);
+
+const AccordionSummary = withStyles({
+    root: {
+        backgroundColor:'rgba(245, 250, 235, 1)',
+        // backgroundColor: 'rgba(255, 255, 255, 1)',
+        // borderBottom: '1px solid rgba(0, 0, 0, .125)',
+        borderBottom: 0,
+        borderTop: '1px solid lightgray',
+        // marginBottom: -1,
+        minHeight: 56,
+        '&$expanded': {
+            minHeight: 56,
+        },
+        padding:0
+    },
+    content: {
+        '&$expanded': {
+            margin: '0px 0',
+        },
+        padding:0,
+        margin:0,
+    },
+    expanded: {},
+})(MuiAccordionSummary);
+
+const AccordionDetails = withStyles((theme) => ({
+    root: {
+        padding: theme.spacing(2),
+        // backgroundColor: 'rgba(220, 240, 220, 1)',
+    },
+}))(MuiAccordionDetails);
 
 export default function Account (props) {
     const classes = useStyles();
@@ -57,15 +110,25 @@ export default function Account (props) {
     }
     return (
         <div>
-            <Grid container spacing={3}>
-                <Grid item xs={4}>
-                    <Accordion className={classes.marginB}>
+            <Grid container spacing={0}>
+                <Grid item xs={4} style={{borderRight:'1px solid lightgray'}}>
+                    <Grid container justify="space-around" className={classes.sectionHeader}>
+                        <Typography variant="h2">Kunde</Typography>
+                    </Grid>
+                    <Accordion square variant="outlined" style={{
+                        content: {
+                            '&$expanded': {
+                                margin: '0 0',
+                            },
+                            expanded: {},
+                        },
+                    }}>
                         <AccordionSummary
                             expandIcon={<ExpandMoreIcon />}
                             aria-label="Expand"
                             aria-controls="additional-actions1-content"
                         >
-                            <Grid container direction="column">
+                            <Grid container direction="column" className={classes.summaryContent}>
                                 <Grid container alignItems="baseline" justify="space-between">
                                     <Grid item>
                                         <Typography variant="subtitle1">{props.account.name}</Typography>
@@ -97,24 +160,20 @@ export default function Account (props) {
                             </Grid>
                         </AccordionSummary>
                         <AccordionDetails>
-                            <Box className={classes.padding}>
+                            <Grid container alignContent="stretch" direction="column">
                                 <TextField
-                                    className={classes.formField}
                                     value="merc"
                                     label="Kürzel"
                                 />
                                 <TextField
-                                    className={classes.formField}
                                     value="Mercedes Benz AG und Co. KG Dingsbums"
                                     label="Name"
                                 />
                                 <TextField
-                                    className={classes.formField}
                                     value="Sebastian Teister"
                                     label="Kundenbetreuer"
                                 />
                                 <TextField
-                                    className={classes.formField}
                                     value="Kundenlevel"
                                     label="Level"
                                 />
@@ -124,7 +183,6 @@ export default function Account (props) {
                                     </Grid>
                                     <Grid item>
                                         <Checkbox
-                                            className={classes.formField}
                                             value={props.account.verbotskunde}
                                         />
                                     </Grid>
@@ -132,7 +190,6 @@ export default function Account (props) {
                                 {/*<FormControlLabel label="Verbotskunde" control={*/}
                                 {/*} />*/}
                                 <TextField
-                                    className={classes.formField}
                                     value="Automobil"
                                     label="Branche"
                                 />
@@ -154,137 +211,133 @@ export default function Account (props) {
                                 <Grid container justify="flex-end">
                                     <Button variant="contained" onClick={props.saveAccount}>Save</Button>
                                 </Grid>
-                            </Box>
+                            </Grid>
                         </AccordionDetails>
                     </Accordion>
-                    {props.account.addresses.map((address) =>
-                    <Accordion className={classes.marginB} key={address.id}>
-                        <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-label="Expand"
-                            aria-controls="additional-actions1-content"
-                        >
-                            <Box>
-                                <Typography variant="subtitle1">{address.type.name}</Typography>
-                                <Typography>{address.name1}</Typography>
-                                <Typography>{address.street}</Typography>
-                                <Typography>{address.countryCode}-{address.zip} {address.town}</Typography>
-                            </Box>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <Box className={classes.padding}>
-                                <TextField
-                                    className={classes.formField}
-                                    value="Mercedes Daimler Benz ABC"
-                                    label="Feld 1"
-                                />
-                                <TextField
-                                    className={classes.formField}
-                                    value=""
-                                    label="Feld 2"
-                                />
-                                <TextField
-                                    className={classes.formField}
-                                    value=""
-                                    label="Feld 3"
-                                />
-                                <TextField
-                                    className={classes.formField}
-                                    value="Mercedesstraße 123"
-                                    label="Straße"
-                                />
-                                <TextField
-                                    className={classes.formField}
-                                    value="D"
-                                    label="LKZ"
-                                />
-                                <TextField
-                                    className={classes.formField}
-                                    value="PLZ"
-                                    label="77777"
-                                />
-                                <TextField
-                                    className={classes.formField}
-                                    value=" Untertürckheim-Cannstatt"
-                                    label="Stadt"
-                                />
-                            </Box>
-                        </AccordionDetails>
-                    </Accordion>
-                    )}
-                </Grid>
-                <Grid item xs={4}>
+                    <Grid container justify="space-around" className={classes.sectionHeader}>
+                        <Typography variant="h2">Kontakte</Typography>
+                    </Grid>
                     {props.account.contacts.map((contact) =>
-                    <Accordion className={classes.marginB} key={contact.id}>
-                        <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-label="Expand"
-                            aria-controls="additional-actions1-content"
-                            id="additional-actions1-header"
-                        >
-                            <Box>
-                                <Typography variant="subtitle1">{contact.firstname} {contact.lastname}</Typography>
-                                <Typography>{contact.position} {contact.department}</Typography>
-                                {/*{contact.connections.map((connection) =>*/}
-                                {/*    <Typography>{connection.text}</Typography>*/}
-                                {/*)}*/}
-                                {/*<Typography>{contact.remarks}</Typography>*/}
-                            </Box>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <Box className={classes.padding}>
-                                <TextField
-                                    className={classes.formField}
-                                    value="Ola"
-                                    label="Vorname"
-                                />
-                                <TextField
-                                    className={classes.formField}
-                                    value="Källlenius"
-                                    label="Nachname"
-                                />
-                                <TextField
-                                    className={classes.formField}
-                                    value="Vorstand"
-                                    label="Abteilung"
-                                />
-                                <TextField
-                                    className={classes.formField}
-                                    value="Vorsitzender"
-                                    label="Position"
-                                />
-                                <TextField
-                                    className={classes.formField}
-                                    value="0711 1111111"
-                                    label="Telefon"
-                                />
-                                <TextField
-                                    className={classes.formField}
-                                    value="Kann nix"
-                                    label="Bemerkung"
-                                />
-                            </Box>
-                        </AccordionDetails>
-                    </Accordion>
+                        <Accordion key={contact.id} variant="outlined">
+                            <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-label="Expand"
+                                aria-controls="additional-actions1-content"
+                                id="additional-actions1-header"
+                            >
+                                <Box className={classes.summaryContent}>
+                                    <Typography variant="subtitle1">{contact.firstname} {contact.lastname}</Typography>
+                                    <Typography>{contact.position} {contact.department}</Typography>
+                                    {/*{contact.connections.map((connection) =>*/}
+                                    {/*    <Typography>{connection.text}</Typography>*/}
+                                    {/*)}*/}
+                                    {/*<Typography>{contact.remarks}</Typography>*/}
+                                </Box>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                <Grid container alignContent="stretch" direction="column">
+                                    <TextField
+                                        value="Ola"
+                                        label="Vorname"
+                                    />
+                                    <TextField
+                                        value="Källlenius"
+                                        label="Nachname"
+                                    />
+                                    <TextField
+                                        value="Vorstand"
+                                        label="Abteilung"
+                                    />
+                                    <TextField
+                                        value="Vorsitzender"
+                                        label="Position"
+                                    />
+                                    <TextField
+                                        value="0711 1111111"
+                                        label="Telefon"
+                                    />
+                                    <TextField
+                                        value=""
+                                        label="Bemerkung"
+                                    />
+                                </Grid>
+                            </AccordionDetails>
+                        </Accordion>
+                    )}
+                    <Grid container justify="space-around" className={classes.sectionHeader}>
+                        <Typography variant="h2">Adressen</Typography>
+                    </Grid>
+                    {props.account.addresses.map((address) =>
+                        <Accordion key={address.id} variant="outlined">
+                            <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-label="Expand"
+                                aria-controls="additional-actions1-content"
+                            >
+                                <Box className={classes.summaryContent}>
+                                    <Typography variant="subtitle1">{address.type.name}</Typography>
+                                    <Typography>{address.name1}</Typography>
+                                    <Typography>{address.street}</Typography>
+                                    <Typography>{address.countryCode}-{address.zip} {address.town}</Typography>
+                                </Box>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                <Grid container alignContent="stretch" direction="column">
+                                    <TextField
+                                        value="Mercedes Daimler Benz ABC"
+                                        label="Feld 1"
+                                    />
+                                    <TextField
+                                        value=""
+                                        label="Feld 2"
+                                    />
+                                    <TextField
+                                        value=""
+                                        label="Feld 3"
+                                    />
+                                    <TextField
+                                        value="Mercedesstraße 123"
+                                        label="Straße"
+                                    />
+                                    <TextField
+                                        value="D"
+                                        label="LKZ"
+                                    />
+                                    <TextField
+                                        value="PLZ"
+                                        label="77777"
+                                    />
+                                    <TextField
+                                        value=" Untertürckheim-Cannstatt"
+                                        label="Stadt"
+                                    />
+                                </Grid>
+                            </AccordionDetails>
+                        </Accordion>
                     )}
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={8}>
+                    <Grid container justify="space-around" className={classes.sectionHeader}>
+                        <Typography variant="h2">Kommunikation</Typography>
+                    </Grid>
                     {props.account.communications.map((communication) =>
-                    <Accordion className={classes.marginB} key={communication.id}>
+                    <Accordion key={communication.id} variant="outlined">
                         <AccordionSummary
                             expandIcon={<ExpandMoreIcon />}
                             aria-label="Expand"
                             aria-controls="additional-actions1-content"
                         >
-                            <Box>
-                                <Typography variant="subtitle1">{communication.date}</Typography>
-                                <Typography>{communication.contact.firstname} {communication.contact.lastname}</Typography>
+                            <Box className={classes.summaryContent}>
+                                <Grid container alignItems="baseline" justify="space-between">
+                                    <Typography variant="subtitle1">{communication.contact.firstname} {communication.contact.lastname}</Typography>
+                                    <Typography variant="subtitle1">{communication.date}</Typography>
+                                </Grid>
                                 <Typography>{communication.type.name}</Typography>
                                 <Typography>{communication.memo}</Typography>
                             </Box>
                         </AccordionSummary>
                         <AccordionDetails>
-                            <Box className={classes.padding}>
+                            <Grid container alignContent="stretch" direction="column">
                                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
                                     <KeyboardDatePicker
                                         disableToolbar
@@ -301,12 +354,10 @@ export default function Account (props) {
                                     />
                                 </MuiPickersUtilsProvider>
                                 <TextField
-                                    className={classes.formField}
                                     value="Ewa Elzbieta Barg"
                                     label="Kontaktperson"
                                 />
                                 <TextField
-                                    className={classes.formField}
                                     value="Telefonisch"
                                     label="Kontaktart"
                                 />
@@ -317,7 +368,7 @@ export default function Account (props) {
                                     placeholder="Maximum 4 rows"
                                     defaultValue="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
                                 />
-                            </Box>
+                            </Grid>
                         </AccordionDetails>
                     </Accordion>
                     )}

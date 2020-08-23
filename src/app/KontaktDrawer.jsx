@@ -16,22 +16,22 @@ import {Route, Switch} from "react-router-dom";
 import {useHistory} from "react-router";
 import {AccountBox} from "@material-ui/icons";
 
-export const drawerWidth = 240;
-
 const useStyles = makeStyles((theme) => ({
     drawer: {
-        width: drawerWidth,
+        width: theme.drawerWidth,
         flexShrink: 0,
         whiteSpace: 'nowrap',
     },
     drawerOpen: {
-        width: drawerWidth,
+        backgroundColor: 'rgba(250, 250, 235, 1)',
+        width: theme.drawerWidth,
         transition: theme.transitions.create('width', {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.enteringScreen,
         }),
     },
     drawerClose: {
+        backgroundColor: 'rgba(250, 250, 235, 1)',
         transition: theme.transitions.create('width', {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,

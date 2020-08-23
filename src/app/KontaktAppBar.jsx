@@ -18,11 +18,10 @@ import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import {useHistory} from "react-router";
 import {Box} from "@material-ui/core";
 
-export const drawerWidth = 240;
-
 const useStyles = makeStyles((theme) => ({
     appBar: {
-        background: 'white',
+        background: theme.appBarBackground,
+        borderBottom: theme.appBarBorder,
         zIndex: theme.zIndex.drawer + 1,
         transition: theme.transitions.create(['width', 'margin'], {
             easing: theme.transitions.easing.sharp,
@@ -30,8 +29,8 @@ const useStyles = makeStyles((theme) => ({
         }),
     },
     appBarShift: {
-        marginLeft: drawerWidth,
-        width: `calc(100% - ${drawerWidth}px)`,
+        marginLeft: theme.drawerWidth,
+        width: `calc(100% - ${theme.drawerWidth}px)`,
         transition: theme.transitions.create(['width', 'margin'], {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.enteringScreen,
@@ -48,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
         width: "intrinsic",
     },
     search: {
-        background: 'white',
+        // background: 'white',
         marginRight: '20px',
         width: '350px'
     },
@@ -57,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
     },
     paper: {
-        marginRight: theme.spacing(2),
+        // marginRight: theme.spacing(2),
     },
     avatarLink: {
 
@@ -126,6 +125,16 @@ export default function KontaktAppBar (props) {
         history.push('/update-log')
     }
 
+    function goProfile(event) {
+        handleClose(event)
+        props.goProfile()
+    }
+
+    function goPreferences(event) {
+        handleClose(event)
+        props.goPreferences()
+    }
+
     return (
         <AppBar
             elevation={0}
@@ -185,10 +194,10 @@ export default function KontaktAppBar (props) {
                     )}
                 />
                 <Box style={{flexGrow:1}}>
-                    <Typography className={classes.account} variant="body2">
+                    <Typography className={classes.account} variant="subtitle2">
                         {props.activeAccount ? props.activeAccount.name : "Mercedes Benz AG Stuttgart, Dieter Zetsche"}
                     </Typography>
-                    <Typography className={classes.account} variant="body2">
+                    <Typography className={classes.account} variant="subtitle2">
                         {props.activeAccount ? activeAccountAddress() : "0711 25935414, dieter-zetsche@daimler-benz-ag.com"}
                     </Typography>
                 </Box>
@@ -207,8 +216,8 @@ export default function KontaktAppBar (props) {
                                 <Paper>
                                     <ClickAwayListener onClickAway={handleClose}>
                                         <MenuList autoFocusItem={drawerOpen} id="menu-list-grow" onKeyDown={handleListKeyDown}>
-                                            <MenuItem onClick={handleClose}>Profil</MenuItem>
-                                            <MenuItem onClick={handleClose}>Einstellungen</MenuItem>
+                                            <MenuItem onClick={goProfile}>Profil</MenuItem>
+                                            <MenuItem onClick={goPreferences}>Einstellungen</MenuItem>
                                             <MenuItem onClick={handleClose}>Benutzerverwaltung</MenuItem>
                                             <MenuItem onClick={handleClose}>Lizenz</MenuItem>
                                             <MenuItem onClick={logout}>Logout</MenuItem>
