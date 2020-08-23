@@ -1,11 +1,5 @@
 import React from "react";
 import Grid from "@material-ui/core/Grid";
-import { makeStyles } from '@material-ui/core/styles';
-import moment from "moment";
-import { withStyles } from '@material-ui/core/styles';
-import MuiAccordion from '@material-ui/core/Accordion';
-import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
-import MuiAccordionDetails from '@material-ui/core/AccordionDetails';
 import AccountAccordion from '../components/Account'
 import Contact from "../components/Contact";
 import IconHeader from "../../components/IconHeader";
