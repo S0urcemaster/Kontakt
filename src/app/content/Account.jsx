@@ -12,6 +12,7 @@ export default function Account (props) {
         //     history.push("/overview")
         // }
     })
+
     return (
         <div>
             <Grid container spacing={0}>
@@ -19,12 +20,13 @@ export default function Account (props) {
                     <IconHeader icon="AccountBalance" title="Kunde" />
                     <AccountAccordion
                         account={props.account}
-                        saveAccount={props.saveAccount}
+                        save={props.saveAccount}
                     />
                     <IconHeader icon="AccountBox" title="Kontakte" />
                     {props.account.contacts.map((contact) =>
                         <Contact
                             contact={contact}
+                            save={props.saveContact}
                             // saveContact={props.saveContact}
                         />
                     )}

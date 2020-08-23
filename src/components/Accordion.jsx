@@ -5,6 +5,8 @@ import MuiAccordion from "@material-ui/core/Accordion";
 import MuiAccordionSummary from "@material-ui/core/AccordionSummary";
 import MuiAccordionDetails from "@material-ui/core/AccordionDetails";
 import Grid from "@material-ui/core/Grid";
+import {MuiPickersUtilsProvider} from "@material-ui/pickers";
+import Button from "@material-ui/core/Button";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -89,7 +91,13 @@ export default function Accordion (props) {
                 </Grid>
             </AccordionSummary>
             <AccordionDetails>
-                {props.details}
+                <Grid container alignContent="stretch" direction="column">
+                    {props.details}
+                    <Grid container justify="flex-end" style={{marginTop:'10px'}}>
+                        <Button variant="outlined" onClick={props.revert} style={{marginRight:'10px'}} disabled={!props.revertEnabled}>Revert</Button>
+                        <Button variant="outlined" onClick={props.save} disabled={!props.saveEnabled}>Save</Button>
+                    </Grid>
+                </Grid>
             </AccordionDetails>
         </KBAccordion>
     )

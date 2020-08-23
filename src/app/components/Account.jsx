@@ -1,24 +1,36 @@
 import Accordion from "../../components/Accordion";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import {AccountCircle, Apartment, FolderOpen, Timer} from "@material-ui/icons";
+import {AccountCircle, Apartment, Timer} from "@material-ui/icons";
 import React from "react";
 import TextField from "@material-ui/core/TextField";
 import Checkbox from "@material-ui/core/Checkbox";
 import {KeyboardDatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
-import Button from "@material-ui/core/Button";
 import moment from "moment";
 import Tooltip from "@material-ui/core/Tooltip";
 
 export default function Account(props) {
+    const [account, setAccount] = React.useState({});
+    const [saveEnabled, setSaveEnabled] = React.useState(false);
+    const [revertEnabled, setRevertEnabled] = React.useState(false);
     const [selectedDate, setSelectedDate] = React.useState(new Date());
+
+    React.useEffect(() => {
+        setAccount({
+            mnemonic: props.mnemonic,
+            name: props.name,
+        })
+    },[])
+
     const handleDateChange = (date) => {
         setSelectedDate(date);
     };
+
     function accountManagerFullName () {
         return props.account.accountManager.firstname + ' ' + props.account.accountManager.lastname
     }
+
     function nextContactDate () {
         if (props.account.nextContact) {
             return moment(props.account.nextContact).format("dddd, DD.MM.YYYY")
@@ -27,8 +39,32 @@ export default function Account(props) {
             return "Not set"
         }
     }
+
+    function revert() {
+        // props.revertAccount()
+    }
+
+    function save() {
+        props.save(account)
+    }
+
+    function mnemonicChanged(event) {
+        console.log(event.target.value)
+        setAccount({...account, mnemonic: event.target.value})
+        // props.save(account)
+    }
+
+    React.useEffect(() => {
+        setSaveEnabled(true)
+        setRevertEnabled(true)
+    }, [account]);
+
     return (
         <Accordion
+            save={() => props.save(account)}
+            saveEnabled={saveEnabled}
+            revert={revert}
+            revertEnabled={revertEnabled}
             summary={
                 <Grid container alignItems="baseline" justify="space-between">
                     <Grid item>
@@ -68,8 +104,9 @@ export default function Account(props) {
             details={
                 <Grid container alignContent="stretch" direction="column">
                     <TextField
-                        value="merc"
+                        value={props.account.mnemonic}
                         label="Kürzel"
+                        onChange={mnemonicChanged}
                     />
                     <TextField
                         value="Mercedes Benz AG und Co. KG Dingsbums"
@@ -114,9 +151,6 @@ export default function Account(props) {
                             }}
                         />
                     </MuiPickersUtilsProvider>
-                    <Grid container justify="flex-end">
-                        <Button variant="contained" onClick={props.saveAccount}>Save</Button>
-                    </Grid>
                 </Grid>
             }
         >

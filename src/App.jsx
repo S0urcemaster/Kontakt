@@ -51,10 +51,11 @@ function App() {
     const [open, setOpen] = React.useState(true);
     const [alertOpen, setAlertOpen] = React.useState(false);
     const [licenseToken, setLicenseToken] = React.useState(null);
-    const [activeAccount, setActiveAccount] = React.useState(null);
+    const [account, setAccount] = React.useState(null);
     const [accountSearchList, setAccountSearchList] = React.useState([]);
     const [accountHistory, setAccountHistory] = React.useState([]);
     const [user, setUser] = React.useState(null);
+
 
     useEffect(() => {
         // axios.get("https://customerboard/json/account/" +1).then(response => {
@@ -63,6 +64,11 @@ function App() {
         //     history.push("/account")
         // });
     }, [])
+
+    React.useEffect(() => {
+        console.log(account)
+    }, [account]);
+
 
     function showProfile () {
         history.push('/profile');
@@ -95,7 +101,7 @@ function App() {
         axios.get(`https://digi-craft.de/customerboard/json/account/`+account.id)
             .then(res => {
                 console.log(res.data)
-                setActiveAccount(res.data.result)
+                setAccount(res.data.result)
                 pushAccountHistory(res.data.result)
                 history.push("/account")
             })
@@ -116,12 +122,26 @@ function App() {
     }
 
     function accountClicked (account) {
-        setActiveAccount(account)
+        setAccount(account)
         history.push("/account")
     }
 
-    function saveAccount () {
+    function saveAccount (account) {
+        console.log('save: ', account)
+        setAccount(prevState => {
+            return {
+                ...prevState,
+                ...account
+            }
+        })
+        console.log(account)
         setAlertOpen(true);
+    }
+
+    function saveContact(contact) {
+        //save contact
+        //reload account
+        setAlertOpen(true)
     }
 
     return (
@@ -135,7 +155,7 @@ function App() {
             <KontaktAppBar
                 open={open}
                 opened={() => setOpen(true)}
-                activeAccount={activeAccount}
+                activeAccount={account}
                 requireList={updateSearchList}
                 accountSearchList={accountSearchList}
                 accountSelected={accountSelected}
@@ -162,11 +182,12 @@ function App() {
                         <Preferences />
                     </Route>
                     <Route path="/account">
-                        {activeAccount ?
+                        {account ?
                             <Account
-                                account={activeAccount}
+                                account={account}
                                 accountSelected={accountSelected}
                                 saveAccount={saveAccount}
+                                saveContact={saveContact}
                             /> :
                             <Redirect to="/" />
                         }
