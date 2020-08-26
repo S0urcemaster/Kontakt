@@ -10,7 +10,8 @@ import IconButton from "@material-ui/core/IconButton";
 import {Close} from "@material-ui/icons";
 import Dialog from "@material-ui/core/Dialog";
 import account20200826 from '../../snapshot-images/Account 2020-08-26.png'
-import account20200826a from '../../snapshot-images/Account 2020-08-26.png'
+import {useHistory} from "react-router";
+import {Link} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
     h1: {
@@ -31,18 +32,19 @@ const useStyles = makeStyles((theme) => ({
 
 
 export default function Overview (props) {
-    const classes = useStyles();
+    const classes = useStyles()
+    const history = useHistory()
 
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(false)
 
     const handleClickOpen = (data) => {
         console.log('open: ', data)
         setSelectedImage(data)
-        setOpen(true);
+        setOpen(true)
     };
 
     const handleClose = () => {
-        setOpen(false);
+        setOpen(false)
     };
     const tileData = [
         {
@@ -58,9 +60,16 @@ export default function Overview (props) {
         <div>
             <Paper style={{padding:"20px"}}>
                 <Typography variant="h1" className={classes.h1}>kontakt base - Kundenbesuchsdatenbank</Typography>
-                <Typography variant="body1">"kontakt base" is a customer relationship management software training project
+                <Typography variant="body1" style={{paddingBottom:'20px'}}>
+                    "kontakt base" is a customer relationship management software training project
                 that transforms the former Vue frontend with handmade javascript components into React with Material UI.
                 </Typography>
+                <Link to='/update-log'>
+                    <Typography variant="h6" className={classes.h1}>Update Log</Typography>
+                </Link>
+                <a href='https://digi-craft.de/customerboard/#/browseAccounts/account/2' target="_blank">
+                    <Typography variant="h6" className={classes.h1}>Former productive Vue Project (new tab)</Typography>
+                </a>
             </Paper>
             <Paper style={{padding:"20px", backgroundColor:'#aaa'}}>
                 <Typography variant="h1" className={classes.h1}>Development Snapshots</Typography>

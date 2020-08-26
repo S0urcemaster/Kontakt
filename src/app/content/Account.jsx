@@ -14,57 +14,7 @@ export default function Account (props) {
 
     const {id} = useParams()
 
-    const emptyAccount = {
-        name:'',
-        accountManager:props.user.firstname +' ' +props.user.lastname,
-        level:'',
-        verbotskunde:'',
-        sector:'',
-        nextContact:'',
-        mnemonic:'',
-        contacts:[
-            {
-                firstname:'',
-                lastname:'',
-                department:'',
-                position:'',
-                remarks:[
-                    {
-                        text:'',
-                        type:{id:1, name:''}}
-                ],
-                connections:[
-                    {data:'', type:{id:1, name:''}}
-                ]
-            }
-        ],
-        addresses:[
-            {
-                name1:'',
-                name2:'',
-                name3:'',
-                street:'',
-                zip:'',
-                countryCode:'',
-                town:'',
-                type:{id:1, name:''},
-                remarks:[
-                    {text:'', type:{id:1, name:''}}
-                ],
-                connections:[
-                    {data:'', type:{id:1, name:''}}
-                ]
-            }
-        ]
-    }
-
     useEffect(() => {
-        console.log('id: ', id)
-        if(id === "new") {
-            console.log('new: ', id)
-            setAccount(emptyAccount)
-            return
-        }
         axios.get(`https://digi-craft.de/customerboard/json/account/`+id)
             .then(res => {
                 console.log('get: ', res.data.result)

@@ -99,9 +99,9 @@ function App() {
         // history.push("/account/" +account.id)
         axios.get(`https://digi-craft.de/customerboard/json/account/`+account.id)
             .then(res => {
-                console.log(res.data)
+                console.log('account selected: ', res.data)
                 // setAccount(res.data.result)
-                pushAccountHistory(res.data.result)
+                // pushAccountHistory(res.data.result)
                 history.push("/account/" +account.id)
             })
         // axios.get(`https://customerboard/json/account/`+account.id)

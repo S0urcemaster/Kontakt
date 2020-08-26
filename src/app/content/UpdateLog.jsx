@@ -7,24 +7,25 @@ export default function UpdateLog () {
         <Grid container spacing={0}>
             <Grid item xs={6}>
                 <Paper style={{padding:"20px"}}>
-                    <Typography variant="h1">Working (23.08.2020)</Typography>
+                    <Typography variant="h1">Functioning (26.08.2020)</Typography>
                     <ul>
-                        <li>Account search through API request to digi-craft/customerboard</li>
+                        <li>Every clickable item/menu should give a result</li>
+                        <li>Account search (left input)</li>
                         <li>Display account details</li>
-                        <li>Account history in left drawer (beta)</li>
+                        <li>Revert function (Account Contacts)</li>
+                        <li>Account routing by url</li>
+                        <li>"KB" menu</li>
+                        <li>User avatar menu</li>
+                        <li>Account context menu/Export</li>
                     </ul>
                     <Typography variant="body1">Test data: 101 biggest companies in Baden-Wuerttemberg</Typography>
-                    <Typography variant="body1">Hours spent: 58,2</Typography>
+                    <Typography variant="h6">Time spent: 72,2 h (+10h earlier React learning +Vue experience: ~300 h)</Typography>
                 </Paper>
                 <Paper style={{padding:"20px"}}>
                     <Typography variant="h1">Sonntag, 30.08.2020</Typography>
                     <ul>
-                        <li>Revert feature</li>
-                        <li>Export/download Account to JSON</li>
-                        <li></li>
-                        <li></li>
-                        <li></li>
-                        <li></li>
+                        <li>Revert feature (proven to function)</li>
+                        <li>Export/download Account to JSON (proven to function)</li>
                     </ul>
                 </Paper>
                 <Paper style={{padding:"20px"}}>
@@ -52,7 +53,7 @@ export default function UpdateLog () {
             </Grid>
             <Grid item xs={6}>
                 <Paper style={{padding:"20px"}}>
-                    <Typography variant="h1">Next Submissions</Typography>
+                    <Typography variant="h1">Next Submissions (completed)</Typography>
                     <ul>
                         <li>Seeds bugfixes</li>
                         <li>Seeds for missing Account fields</li>
