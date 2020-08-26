@@ -1,10 +1,9 @@
 import Grid from "@material-ui/core/Grid";
-import {AccountBalance, AccountBox, Add, LocationOn, Message, MoreHoriz} from "@material-ui/icons";
+import {AccountBalance, AccountBox, Add, LocationOn, Message, MoreVert} from "@material-ui/icons";
 import Typography from "@material-ui/core/Typography";
 import React, {useEffect, useRef, useState} from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import Popper from "@material-ui/core/Popper";
-import Grow from "@material-ui/core/Grow";
 import Paper from "@material-ui/core/Paper";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import MenuList from "@material-ui/core/MenuList";
@@ -72,7 +71,7 @@ const MaterialIcon = ({icon, margin, props, onClick}) => {
         case 'More':
             return (
                 <div style={margin}>
-                    <MoreHoriz style={{cursor: 'pointer'}}
+                    <MoreVert style={{cursor: 'pointer'}}
                                ref={anchorRef} onClick={toggleMenu}
                     />
                     <Popper open={menuOpen} anchorEl={anchorRef.current} role={undefined} transition disablePortal style={{zIndex:1}} placement="bottom-end">

@@ -81,6 +81,7 @@ export default function UpdateLog () {
                     <Typography variant="h1">Ideas</Typography>
                     <ul>
                         <li>Account communication summary</li>
+                        <li>Benennung Kunde oder Firma per Setup für unterschiedliche Anwendung/Zielgruppe</li>
                     </ul>
                 </Paper>
             </Grid>

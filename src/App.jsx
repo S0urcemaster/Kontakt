@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import './App.css';
 import 'fontsource-roboto';
-import {makeStyles} from '@material-ui/core/styles';
+import {makeStyles, useTheme} from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import KontaktDrawer from "./app/KontaktDrawer";
 import KontaktAppBar from "./app/KontaktAppBar";
@@ -15,6 +15,7 @@ import Alert from "@material-ui/lab/Alert";
 import UpdateLog from "./app/content/UpdateLog";
 import Profile from "./app/content/Profile";
 import Preferences from "./app/content/Preferences";
+import Overview from "./app/content/Overview";
 
 export const drawerWidth = 240;
 
@@ -54,6 +55,7 @@ function App() {
     const [accountHistory, setAccountHistory] = useState([]);
     const [user, setUser] = useState(null);
 
+
     useEffect(() => {
         // axios.get("https://customerboard/json/account/" +1).then(response => {
         //     setActiveAccount(response.data.result)
@@ -81,28 +83,20 @@ function App() {
             })
         // axios.get(`https://customerboard/json/account/search/`+input)
         //     .then(res => {
-        //         // console.log(res.data)
-        //         // let array = array.map(myObj, function(value, index) {
-        //         //     return [value];
-        //         // });
-        //         setAccountSearchList(res.data.result)
         //     })
     }
 
     function accountSelected (account) {
+        // history.push("/account/" +account.id)
         axios.get(`https://digi-craft.de/customerboard/json/account/`+account.id)
             .then(res => {
                 console.log(res.data)
                 // setAccount(res.data.result)
-                // pushAccountHistory(res.data.result)
+                pushAccountHistory(res.data.result)
                 history.push("/account/" +account.id)
             })
         // axios.get(`https://customerboard/json/account/`+account.id)
         //     .then(res => {
-        //         console.log(res.data)
-        //         setActiveAccount(res.data.result)
-        //         pushAccountHistory(res.data.result)
-        //         history.push("/account")
         //     })
     }
 
@@ -113,6 +107,7 @@ function App() {
     }
 
     function pushAccountHistory (account) {
+        console.log('history pushed: ', account)
         setAccountHistory([account].concat(accountHistory))
     }
 
@@ -138,29 +133,30 @@ function App() {
                 accountSelected={accountSelected}
                 goProfile={() => {history.push('/profile')}}
                 goPreferences={() => showPreferences()}
+                history={accountHistory}
             />
-            <KontaktDrawer
-                open={open}
-                closed={() => setOpen(false)}
-                accountHistory={accountHistory}
-                accountClicked={accountClicked}
-            />
+            {/*<KontaktDrawer*/}
+            {/*    open={open}*/}
+            {/*    closed={() => setOpen(false)}*/}
+            {/*    accountHistory={accountHistory}*/}
+            {/*    accountClicked={accountClicked}*/}
+            {/*/>*/}
             <main className={classes.content}>
                 <div className={classes.toolbar} />
                 <Switch>
                     <Route exact path="/">
-                        {/*<Overview />*/}
-                        <UpdateLog />
+                        <Overview />
+                        {/*<UpdateLog />*/}
                     </Route>
-                    <Route path="/profile">
+                    <Route exact path="/profile">
                         <Profile />
                     </Route>
-                    <Route path="/preferences">
+                    <Route exact path="/preferences">
                         <Preferences />
                     </Route>
                     <Route exact path="/account/:id" render={(props) => <Account {...props} loaded={accountLoaded}/>}>
                     </Route>
-                    <Route path="/update-log">
+                    <Route exact path="/update-log">
                         <UpdateLog />
                     </Route>
                 </Switch>

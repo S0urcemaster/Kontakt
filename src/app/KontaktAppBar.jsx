@@ -1,12 +1,10 @@
 import AppBar from "@material-ui/core/AppBar";
-import clsx from "clsx";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
-import MenuIcon from "@material-ui/icons/Menu";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
-import React, {useRef} from "react";
-import {makeStyles} from "@material-ui/core/styles";
+import React, {useRef, useState} from "react";
+import {makeStyles, useTheme} from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import Avatar from "@material-ui/core/Avatar";
 import Popper from "@material-ui/core/Popper";
@@ -17,6 +15,8 @@ import MenuItem from "@material-ui/core/MenuItem";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import {useHistory} from "react-router";
 import {Box} from "@material-ui/core";
+import kb from "../kb.png"
+import {MoreVert} from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
     appBar: {
@@ -65,37 +65,59 @@ const useStyles = makeStyles((theme) => ({
 
 export default function KontaktAppBar (props) {
     const classes = useStyles()
-    const [drawerOpen, setDrawerOpen] = React.useState(false)
+    const [menuOpen, setMenuOpen] = useState(false)
     const anchorRef = useRef(null)
+    const [historyOpen, setHistoryOpen] = useState(false)
+    const historyRef = useRef(null)
     const history = useHistory()
 
+    const theme = useTheme()
+
     // return focus to the button when we transitioned from !open -> open
-    const prevOpen = React.useRef(drawerOpen)
-    React.useEffect(() => {
-        if (prevOpen.current === true && drawerOpen === false) {
-            anchorRef.current.focus()
-        }
+    // const prevOpen = React.useRef(drawerOpen)
+    // React.useEffect(() => {
+    //     if (prevOpen.current === true && drawerOpen === false) {
+    //         anchorRef.current.focus()
+    //     }
+    //
+    //     prevOpen.current = drawerOpen
+    // }, [drawerOpen]);
 
-        prevOpen.current = drawerOpen
-    }, [drawerOpen]);
-
-    const handleDrawerOpen = () => {
-        props.opened()
-    }
+    // const handleDrawerOpen = () => {
+    //     props.opened()
+    // }
 
     const handleToggle = () => {
-        setDrawerOpen((prevOpen) => !prevOpen)
+        setMenuOpen((prevOpen) => !prevOpen)
+    }
+
+    const toggleHistory = () => {
+        setHistoryOpen((prevOpen) => !prevOpen)
     }
 
     const handleClose = (event) => {
         if (anchorRef.current && anchorRef.current.contains(event.target)) {
             return
         }
-        setDrawerOpen(false)
+        setMenuOpen(false)
+    }
+
+    const handleHistoryClose = (event) => {
+        // if (historyRef.current && historyRef.current.contains(event.target)) {
+        //     return
+        // }
+        setHistoryOpen(false)
+    }
+
+    function historySelected (event, account) {
+        handleHistoryClose(event)
+        props.accountSelected(account)
     }
 
     function accountSearch (event) {
-        props.requireList(event.target.value)
+        if(event.target.value) {
+            props.requireList(event.target.value)
+        }
     }
 
     const logout = (event) => {
@@ -106,13 +128,14 @@ export default function KontaktAppBar (props) {
     function handleListKeyDown(event) {
         if (event.key === 'Tab') {
             event.preventDefault()
-            setDrawerOpen(false)
+            setMenuOpen(false)
         }
     }
 
-    function accountSelected(event, account) {
+    function accountSelected(account) {
+        console.log('selected: ', account)
         props.accountSelected(account)
-        history.push("/account")
+        // history.push("/account")
     }
 
     function activeAccountAddress() {
@@ -139,28 +162,30 @@ export default function KontaktAppBar (props) {
         <AppBar
             elevation={0}
             position="fixed"
-            className={clsx(classes.appBar, {
-                [classes.appBarShift]: props.open,
-            })}
+            style={theme.AppBar}
+            // className={clsx(classes.appBar, {
+            //     [classes.appBarShift]: props.open,
+            // })}
         >
             <Toolbar>
                 <IconButton
                     color="inherit"
                     aria-label="open drawer"
-                    onClick={handleDrawerOpen}
+                    onClick={() => history.push("/")}
                     edge="start"
-                    className={clsx(classes.menuButton, {
-                        [classes.hide]: props.open,
-                    })}
+                    // className={clsx(classes.menuButton, {
+                    //     [classes.hide]: props.open,
+                    // })}
                 >
-                    <MenuIcon />
+                    <img src={kb}/>
+                    {/*<MenuIcon />*/}
                 </IconButton>
                 <Autocomplete
                     className={classes.search}
                     id="accountSearch"
                     options={props.accountSearchList}
                     getOptionLabel={(option) => option.name}
-                    onChange={accountSelected}
+                    onChange={(event, account) => accountSelected(account)}
                     onInput={accountSearch}
                     renderInput={(params) => (
                         <div ref={params.InputProps.ref}>
@@ -193,12 +218,28 @@ export default function KontaktAppBar (props) {
                         </div>
                     )}
                 />
+                <div>
+                    <MoreVert style={{cursor: 'pointer'}}
+                              ref={historyRef} onClick={toggleHistory}
+                    />
+                    <Popper open={historyOpen} anchorEl={historyRef.current} role={undefined} transition disablePortal style={{zIndex:1}} placement="bottom-start">
+                        <Paper>
+                            <ClickAwayListener onClickAway={handleHistoryClose}>
+                                <MenuList autoFocusItem={historyOpen} id="menu-list-grow">
+                                    {props.history.map((item, key) =>
+                                        <MenuItem key={key} onClick={(event) => historySelected(event, item)}>{item.name}</MenuItem>
+                                    )}
+                                </MenuList>
+                            </ClickAwayListener>
+                        </Paper>
+                    </Popper>
+                </div>
                 <Box style={{flexGrow:1}}>
                     <Typography className={classes.account} variant="subtitle2">
-                        {props.activeAccount ? props.activeAccount.name : "Mercedes Benz AG Stuttgart, Dieter Zetsche"}
+                        {props.activeAccount ? props.activeAccount.name : "Kein Kunde"}
                     </Typography>
                     <Typography className={classes.account} variant="subtitle2">
-                        {props.activeAccount ? activeAccountAddress() : "0711 25935414, dieter-zetsche@daimler-benz-ag.com"}
+                        {props.activeAccount ? activeAccountAddress() : "ausgewählt"}
                     </Typography>
                 </Box>
                 <div>
@@ -207,7 +248,7 @@ export default function KontaktAppBar (props) {
                             onClick={() => handleToggle()}
                             style={{cursor:"pointer"}}
                     />
-                    <Popper open={drawerOpen} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
+                    <Popper open={menuOpen} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
                         {({ TransitionProps, placement }) => (
                             <Grow
                                 {...TransitionProps}
@@ -215,7 +256,7 @@ export default function KontaktAppBar (props) {
                             >
                                 <Paper>
                                     <ClickAwayListener onClickAway={handleClose}>
-                                        <MenuList autoFocusItem={drawerOpen} id="menu-list-grow" onKeyDown={handleListKeyDown}>
+                                        <MenuList id="menu-list-grow" onKeyDown={handleListKeyDown}>
                                             <MenuItem onClick={goProfile}>Profil</MenuItem>
                                             <MenuItem onClick={goPreferences}>Einstellungen</MenuItem>
                                             <MenuItem onClick={handleClose}>Benutzerverwaltung</MenuItem>

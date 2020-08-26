@@ -3,7 +3,16 @@ import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
 
 const theme = createMuiTheme({
     palette: {
-        // type: 'dark'
+        AppBar: {
+            primary: {
+                light: '#fff',
+                dark: '#000'
+            },
+            secondary: {
+                light: '#000',
+                dark: '#fff'
+            }
+        }
     },
     overrides: {
         MuiTypography: {
@@ -57,6 +66,10 @@ const theme = createMuiTheme({
     drawerWidth: 240,
     appBarBackground: 'rgba(250, 250, 235, 1)',
     appBarBorder: "1px solid lightGray",
+    AppBar: {
+        background: '#fff',
+        color: '#000',
+    }
 });
 
 export default theme
