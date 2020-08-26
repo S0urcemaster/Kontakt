@@ -65,52 +65,51 @@ const useStyles = makeStyles((theme) => ({
 
 export default function KontaktAppBar (props) {
     const classes = useStyles()
-    const [menuOpen, setMenuOpen] = useState(false)
-    const anchorRef = useRef(null)
+    const [userMenuOpen, setMenuOpen] = useState(false)
+    const userMenuRef = useRef(null)
     const [historyOpen, setHistoryOpen] = useState(false)
     const historyRef = useRef(null)
+    const [mainMenuOpen, setMainMenuOpen] = useState(false)
+    const mainMenuRef = useRef(null)
+
     const history = useHistory()
 
     const theme = useTheme()
 
-    // return focus to the button when we transitioned from !open -> open
-    // const prevOpen = React.useRef(drawerOpen)
-    // React.useEffect(() => {
-    //     if (prevOpen.current === true && drawerOpen === false) {
-    //         anchorRef.current.focus()
-    //     }
-    //
-    //     prevOpen.current = drawerOpen
-    // }, [drawerOpen]);
-
-    // const handleDrawerOpen = () => {
-    //     props.opened()
-    // }
-
-    const handleToggle = () => {
+    const toggleUserMenu = () => {
         setMenuOpen((prevOpen) => !prevOpen)
+    }
+
+    const userMenuClose = (event) => {
+        if (userMenuRef.current && userMenuRef.current.contains(event.target)) {
+            return
+        }
+        setMenuOpen(false)
     }
 
     const toggleHistory = () => {
         setHistoryOpen((prevOpen) => !prevOpen)
     }
 
-    const handleClose = (event) => {
-        if (anchorRef.current && anchorRef.current.contains(event.target)) {
-            return
-        }
-        setMenuOpen(false)
-    }
-
-    const handleHistoryClose = (event) => {
-        // if (historyRef.current && historyRef.current.contains(event.target)) {
-        //     return
-        // }
+    const historyClose = () => {
         setHistoryOpen(false)
     }
 
+    const toggleMainMenu = () => {
+        setMainMenuOpen((prevOpen) => !prevOpen)
+    }
+
+    const mainMenuClose = () => {
+        setMainMenuOpen(false)
+    }
+
+    function mainMenuSelected (item) {
+        mainMenuClose()
+        props.mainMenuSelected(item)
+    }
+
     function historySelected (event, account) {
-        handleHistoryClose(event)
+        historyClose(event)
         props.accountSelected(account)
     }
 
@@ -121,15 +120,8 @@ export default function KontaktAppBar (props) {
     }
 
     const logout = (event) => {
-        handleClose(event)
+        userMenuClose(event)
         history.push("/login")
-    }
-
-    function handleListKeyDown(event) {
-        if (event.key === 'Tab') {
-            event.preventDefault()
-            setMenuOpen(false)
-        }
     }
 
     function accountSelected(account) {
@@ -144,17 +136,17 @@ export default function KontaktAppBar (props) {
     }
 
     function gotoUpdateLog(event) {
-        handleClose(event)
+        userMenuClose(event)
         history.push('/update-log')
     }
 
     function goProfile(event) {
-        handleClose(event)
+        userMenuClose(event)
         props.goProfile()
     }
 
     function goPreferences(event) {
-        handleClose(event)
+        userMenuClose(event)
         props.goPreferences()
     }
 
@@ -171,7 +163,8 @@ export default function KontaktAppBar (props) {
                 <IconButton
                     color="inherit"
                     aria-label="open drawer"
-                    onClick={() => history.push("/")}
+                    // onClick={() => history.push("/")}
+                    ref={mainMenuRef} onClick={toggleMainMenu}
                     edge="start"
                     // className={clsx(classes.menuButton, {
                     //     [classes.hide]: props.open,
@@ -180,6 +173,17 @@ export default function KontaktAppBar (props) {
                     <img src={kb}/>
                     {/*<MenuIcon />*/}
                 </IconButton>
+                <Popper open={mainMenuOpen} anchorEl={mainMenuRef.current} role={undefined} transition disablePortal style={{zIndex:1}} placement="bottom-start">
+                    <Paper>
+                        <ClickAwayListener onClickAway={mainMenuClose}>
+                            <MenuList autoFocusItem={mainMenuOpen} id="menu-list-grow">
+                                {props.mainMenu.map((item, key) =>
+                                    <MenuItem key={key} onClick={() => mainMenuSelected(item)}>{item.title}</MenuItem>
+                                )}
+                            </MenuList>
+                        </ClickAwayListener>
+                    </Paper>
+                </Popper>
                 <Autocomplete
                     className={classes.search}
                     id="accountSearch"
@@ -224,7 +228,7 @@ export default function KontaktAppBar (props) {
                     />
                     <Popper open={historyOpen} anchorEl={historyRef.current} role={undefined} transition disablePortal style={{zIndex:1}} placement="bottom-start">
                         <Paper>
-                            <ClickAwayListener onClickAway={handleHistoryClose}>
+                            <ClickAwayListener onClickAway={historyClose}>
                                 <MenuList autoFocusItem={historyOpen} id="menu-list-grow">
                                     {props.history.map((item, key) =>
                                         <MenuItem key={key} onClick={(event) => historySelected(event, item)}>{item.name}</MenuItem>
@@ -244,23 +248,23 @@ export default function KontaktAppBar (props) {
                 </Box>
                 <div>
                     <Avatar src="/broken-image.jpg"
-                            ref={anchorRef}
-                            onClick={() => handleToggle()}
+                            ref={userMenuRef}
+                            onClick={() => toggleUserMenu()}
                             style={{cursor:"pointer"}}
                     />
-                    <Popper open={menuOpen} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
+                    <Popper open={userMenuOpen} anchorEl={userMenuRef.current} role={undefined} transition disablePortal>
                         {({ TransitionProps, placement }) => (
                             <Grow
                                 {...TransitionProps}
                                 style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
                             >
                                 <Paper>
-                                    <ClickAwayListener onClickAway={handleClose}>
-                                        <MenuList id="menu-list-grow" onKeyDown={handleListKeyDown}>
+                                    <ClickAwayListener onClickAway={userMenuClose}>
+                                        <MenuList id="menu-list-grow">
                                             <MenuItem onClick={goProfile}>Profil</MenuItem>
                                             <MenuItem onClick={goPreferences}>Einstellungen</MenuItem>
-                                            <MenuItem onClick={handleClose}>Benutzerverwaltung</MenuItem>
-                                            <MenuItem onClick={handleClose}>Lizenz</MenuItem>
+                                            <MenuItem onClick={userMenuClose}>Benutzerverwaltung</MenuItem>
+                                            <MenuItem onClick={userMenuClose}>Lizenz</MenuItem>
                                             <MenuItem onClick={logout}>Logout</MenuItem>
                                             <MenuItem onClick={gotoUpdateLog}>Update Log</MenuItem>
                                         </MenuList>

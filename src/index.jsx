@@ -26,7 +26,7 @@ ReactDOM.render(
                       </Route>
                   </Switch>
               </UserContext.Provider>
-          </BrowserRouter>,
+          </BrowserRouter>
       </ThemeProvider>
   </React.StrictMode>,
   document.getElementById('root')

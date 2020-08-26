@@ -16,6 +16,7 @@ import UpdateLog from "./app/content/UpdateLog";
 import Profile from "./app/content/Profile";
 import Preferences from "./app/content/Preferences";
 import Overview from "./app/content/Overview";
+import NewAccount from "./app/content/NewAccount";
 
 export const drawerWidth = 240;
 
@@ -53,8 +54,16 @@ function App() {
     const [account, setAccount] = useState(null);
     const [accountSearchList, setAccountSearchList] = useState([]);
     const [accountHistory, setAccountHistory] = useState([]);
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState({
+        id:1,
+        firstname:'Joe',
+        lastname:'Kher',
+    });
 
+    const mainMenu = [
+        {title:"Overview", path:"/"},
+        {title:"New Account", path:'/account/new'},
+    ]
 
     useEffect(() => {
         // axios.get("https://customerboard/json/account/" +1).then(response => {
@@ -116,6 +125,11 @@ function App() {
         history.push("/account/" +account.id)
     }
 
+    function mainMenuSelected (menu) {
+        console.log('menu: ', menu)
+        history.push(menu.path)
+    }
+
     return (
         <div className={classes.root}>
             <CssBaseline />
@@ -134,6 +148,8 @@ function App() {
                 goProfile={() => {history.push('/profile')}}
                 goPreferences={() => showPreferences()}
                 history={accountHistory}
+                mainMenu={mainMenu}
+                mainMenuSelected={mainMenuSelected}
             />
             {/*<KontaktDrawer*/}
             {/*    open={open}*/}
@@ -154,7 +170,9 @@ function App() {
                     <Route exact path="/preferences">
                         <Preferences />
                     </Route>
-                    <Route exact path="/account/:id" render={(props) => <Account {...props} loaded={accountLoaded}/>}>
+                    <Route exact path="/account/new" render={(props) => <NewAccount {...props} loaded={accountLoaded} user={user}/>}>
+                    </Route>
+                    <Route exact path="/account/:id" render={(props) => <Account {...props} loaded={accountLoaded} user={user}/>}>
                     </Route>
                     <Route exact path="/update-log">
                         <UpdateLog />
