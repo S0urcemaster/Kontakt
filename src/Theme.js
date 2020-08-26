@@ -50,8 +50,8 @@ const theme = createMuiTheme({
             },
         },
         MuiAppBar: {
-            background: 'white',
-            borderBottom: "1px solid lightGray",
+            // background: 'white',
+            // borderBottom: "1px solid lightGray",
         }
     },
     drawerWidth: 240,

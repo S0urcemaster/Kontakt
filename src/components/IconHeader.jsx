@@ -1,8 +1,14 @@
 import Grid from "@material-ui/core/Grid";
-import {AccountBalance, AccountBox, LocationOn, Message} from "@material-ui/icons";
+import {AccountBalance, AccountBox, Add, LocationOn, Message, MoreHoriz} from "@material-ui/icons";
 import Typography from "@material-ui/core/Typography";
-import React from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {makeStyles} from "@material-ui/core/styles";
+import Popper from "@material-ui/core/Popper";
+import Grow from "@material-ui/core/Grow";
+import Paper from "@material-ui/core/Paper";
+import ClickAwayListener from "@material-ui/core/ClickAwayListener";
+import MenuList from "@material-ui/core/MenuList";
+import MenuItem from "@material-ui/core/MenuItem";
 
 const useStyles = makeStyles((theme) => ({
     formField: {
@@ -21,17 +27,67 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-const MaterialIcon = ({icon, invisible}) => {
-    const visibility = invisible ? "hidden" : "visible"
+const MaterialIcon = ({icon, margin, props, onClick}) => {
+    const [menuOpen, setMenuOpen] = useState(false)
+    const anchorRef = useRef(null)
+    const prevOpen = useRef(menuOpen)
+
+    useEffect( () => {
+    }, [])
+
+    useEffect(() => {
+        if (prevOpen.current === true && menuOpen === false) {
+            anchorRef.current.focus()
+        }
+        prevOpen.current = menuOpen
+    }, [menuOpen]);
+
+    const handleClose = (event) => {
+        if (anchorRef.current && anchorRef.current.contains(event.target)) {
+            return
+        }
+        setMenuOpen(false)
+    }
+
+    const toggleMenu = () => {
+        setMenuOpen((prevOpen) => !prevOpen)
+    }
+
+    function handleClick (callback) {
+        toggleMenu()
+        callback()
+    }
+
     switch (icon) {
         case 'AccountBalance':
-            return <AccountBalance style={{marginLeft:'5px'}} visibility={visibility} />
+            return <AccountBalance style={margin} />
         case 'AccountBox':
-            return <AccountBox style={{marginLeft:'5px'}} visibility={visibility} />
+            return <AccountBox style={margin} />
         case 'LocationOn':
-            return <LocationOn style={{marginLeft:'5px'}} visibility={visibility} />
+            return <LocationOn style={margin} />
         case 'Message':
-            return <Message style={{marginLeft:'5px'}} visibility={visibility} />
+            return <Message style={margin} />
+        case 'Add':
+            return <Add style={margin} onClick={props.add} />
+        case 'More':
+            return (
+                <div style={margin}>
+                    <MoreHoriz style={{cursor: 'pointer'}}
+                               ref={anchorRef} onClick={toggleMenu}
+                    />
+                    <Popper open={menuOpen} anchorEl={anchorRef.current} role={undefined} transition disablePortal style={{zIndex:1}} placement="bottom-end">
+                        <Paper>
+                            <ClickAwayListener onClickAway={handleClose}>
+                                <MenuList autoFocusItem={menuOpen} id="menu-list-grow">
+                                    {props.menuItems.map((item, key) =>
+                                        <MenuItem key={key} onClick={() => handleClick(item.callback)}>{item.title}</MenuItem>
+                                    )}
+                                </MenuList>
+                            </ClickAwayListener>
+                        </Paper>
+                    </Popper>
+                </div>
+            )
         default: return null
     }
 }
@@ -40,9 +96,10 @@ export default function IconHeader(props) {
     const classes = useStyles()
     return (
         <Grid container justify="space-between" alignContent='center' className={classes.sectionHeader}>
-            <MaterialIcon icon={props.icon} />
+            <MaterialIcon icon={props.iconLeft} margin={{marginLeft:'5px'}} />
             <Typography variant="h2">{props.title}</Typography>
-            <MaterialIcon icon={props.icon} invisible />
+            <MaterialIcon icon={props.iconRight} margin={{marginRight:'5px'}} props={props}>
+            </MaterialIcon>
         </Grid>
     )
 }

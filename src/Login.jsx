@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import {Button, FormControl} from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
@@ -9,9 +9,8 @@ import {useHistory} from "react-router";
 import {UserContext} from "./index";
 
 export default function Login() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    // const [user, setUser] = UserContext
+    // const [email, setEmail] = useState("");
+    // const [password, setPassword] = useState("");
     const history = useHistory();
     // const userContext = useContext(UserContext)
 

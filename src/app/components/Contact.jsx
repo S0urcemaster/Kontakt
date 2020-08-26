@@ -1,46 +1,50 @@
 import Accordion from "../../components/Accordion";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useReducer, useState} from "react";
 import TextField from "@material-ui/core/TextField";
 import {Box} from "@material-ui/core";
+import IconHeader from "../../components/IconHeader";
 
 export default function Contact(props) {
-    const [contact, setContact] = useState({})
     const [saveEnabled, setSaveEnabled] = React.useState(false);
     const [revertEnabled, setRevertEnabled] = React.useState(false);
 
-    useEffect(() => {
-        console.log('component did mount')
-        console.log(props.firstname)
-        setContact({
-            firstname: props.firstname,
-            lastname: props.lastname,
-            position: props.position,
-            department: props.department,
-        })
-        console.log('contact set')
-    }, [])
+    const initialContact = {
+        firstname: props.contact.firstname,
+        lastname: props.contact.lastname,
+        position: props.contact.position,
+        department: props.contact.department,
+        connections: props.contact.connections,
+        remarks: props.contact.remarks,
+    }
 
-    React.useEffect(() => {
-        if(Object.keys(contact).length === 0) return
-        console.log('changed')
+    const [contact, dispatch] = useReducer((state, action) => {
         setSaveEnabled(true)
         setRevertEnabled(true)
-    },[contact])
-
-    function firstnameChanged(event) {
-        setContact(({
-            ...contact,
-            firstname: event.target.value,
-        }))
-    }
+        switch (action.type) {
+            case 'firstname':
+                return {...state, firstname: action.value};
+            case 'lastname':
+                return {...state, lastname: action.value};
+            case 'position':
+                return {...state, position: action.value};
+            case 'department':
+                return {...state, department: action.value};
+            case 'reset':
+                setSaveEnabled(false)
+                setRevertEnabled(false)
+                return {...initialContact};
+            default:
+                throw new Error();
+        }
+    }, initialContact)
 
     return (
         <Accordion
             save={props.save}
             saveEnabled={saveEnabled}
-            revert={props.revert}
+            revert={() => dispatch({type: 'reset'})}
             revertEnabled={revertEnabled}
             summary={
                 <Box>
@@ -55,26 +59,31 @@ export default function Contact(props) {
             details={
                 <Grid container alignContent="stretch" direction="column">
                     <TextField
-                        value="Ola"
+                        value={contact.firstname}
                         label="Vorname"
-                        onChange={firstnameChanged}
+                        onChange={(event) => dispatch({type:'firstname', value:event.target.value})}
                     />
                     <TextField
-                        value="Källlenius"
+                        value={contact.lastname}
                         label="Nachname"
+                        onChange={(event) => dispatch({type:'lastname', value:event.target.value})}
                     />
                     <TextField
-                        value="Vorstand"
+                        value={contact.department}
                         label="Abteilung"
+                        onChange={(event) => dispatch({type:'department', value:event.target.value})}
                     />
                     <TextField
-                        value="Vorsitzender"
+                        value={contact.position}
                         label="Position"
+                        onChange={(event) => dispatch({type:'position', value:event.target.value})}
                     />
-                    <TextField
-                        value="0711 1111111"
-                        label="Telefon"
-                    />
+                    {contact.connections.map((connection) =>
+                        <TextField
+                            value={connection.text}
+                            label={connection.type.name}
+                        />
+                    )}
                     <TextField
                         value=""
                         label="Bemerkung"

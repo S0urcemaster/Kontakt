@@ -5,7 +5,7 @@ import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
-import React from "react";
+import React, {useRef} from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import Avatar from "@material-ui/core/Avatar";
@@ -66,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
 export default function KontaktAppBar (props) {
     const classes = useStyles()
     const [drawerOpen, setDrawerOpen] = React.useState(false)
-    const anchorRef = React.useRef(null)
+    const anchorRef = useRef(null)
     const history = useHistory()
 
     // return focus to the button when we transitioned from !open -> open

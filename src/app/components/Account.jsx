@@ -17,11 +17,12 @@ export default function Account(props) {
     const [selectedDate, setSelectedDate] = React.useState(new Date());
 
     React.useEffect(() => {
-        setAccount({
-            mnemonic: props.mnemonic,
-            name: props.name,
-        })
-    },[])
+        setAccount(prevState => ({
+            ...prevState,
+            mnemonic: props.account.mnemonic,
+            name: props.account.name,
+        }))
+    },[props.account])
 
     const handleDateChange = (date) => {
         setSelectedDate(date);
@@ -42,10 +43,6 @@ export default function Account(props) {
 
     function revert() {
         // props.revertAccount()
-    }
-
-    function save() {
-        props.save(account)
     }
 
     function mnemonicChanged(event) {
@@ -154,7 +151,6 @@ export default function Account(props) {
                 </Grid>
             }
         >
-
         </Accordion>
     )
 }

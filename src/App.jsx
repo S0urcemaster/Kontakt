@@ -1,12 +1,11 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import './App.css';
 import 'fontsource-roboto';
 import {makeStyles} from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import KontaktDrawer from "./app/KontaktDrawer";
 import KontaktAppBar from "./app/KontaktAppBar";
-import {Redirect, Route, Switch} from "react-router-dom";
-import Overview from "./app/content/Overview";
+import {Route, Switch, useParams} from "react-router-dom";
 import Account from "./app/content/Account";
 import {useHistory} from "react-router";
 import axios from "axios";
@@ -48,14 +47,12 @@ const useStyles = makeStyles((theme) => ({
 function App() {
     const classes = useStyles();
     const history = useHistory()
-    const [open, setOpen] = React.useState(true);
-    const [alertOpen, setAlertOpen] = React.useState(false);
-    const [licenseToken, setLicenseToken] = React.useState(null);
-    const [account, setAccount] = React.useState(null);
-    const [accountSearchList, setAccountSearchList] = React.useState([]);
-    const [accountHistory, setAccountHistory] = React.useState([]);
-    const [user, setUser] = React.useState(null);
-
+    const [open, setOpen] = useState(true);
+    const [alertOpen, setAlertOpen] = useState(false);
+    const [account, setAccount] = useState(null);
+    const [accountSearchList, setAccountSearchList] = useState([]);
+    const [accountHistory, setAccountHistory] = useState([]);
+    const [user, setUser] = useState(null);
 
     useEffect(() => {
         // axios.get("https://customerboard/json/account/" +1).then(response => {
@@ -65,14 +62,9 @@ function App() {
         // });
     }, [])
 
-    React.useEffect(() => {
-        console.log(account)
+    useEffect(() => {
+        console.log('account: ', account)
     }, [account]);
-
-
-    function showProfile () {
-        history.push('/profile');
-    }
 
     function showPreferences () {
         history.push('/preferences');
@@ -101,9 +93,9 @@ function App() {
         axios.get(`https://digi-craft.de/customerboard/json/account/`+account.id)
             .then(res => {
                 console.log(res.data)
-                setAccount(res.data.result)
-                pushAccountHistory(res.data.result)
-                history.push("/account")
+                // setAccount(res.data.result)
+                // pushAccountHistory(res.data.result)
+                history.push("/account/" +account.id)
             })
         // axios.get(`https://customerboard/json/account/`+account.id)
         //     .then(res => {
@@ -114,34 +106,19 @@ function App() {
         //     })
     }
 
+    function accountLoaded(account) {
+        console.log('loaded parent: ', account)
+        setAccount(account)
+        pushAccountHistory(account)
+    }
+
     function pushAccountHistory (account) {
         setAccountHistory([account].concat(accountHistory))
-        console.log(account)
-        console.log(accountHistory)
-        // setAccountHistory(accountHistory.slice().push(account))
     }
 
     function accountClicked (account) {
-        setAccount(account)
-        history.push("/account")
-    }
-
-    function saveAccount (account) {
-        console.log('save: ', account)
-        setAccount(prevState => {
-            return {
-                ...prevState,
-                ...account
-            }
-        })
-        console.log(account)
-        setAlertOpen(true);
-    }
-
-    function saveContact(contact) {
-        //save contact
-        //reload account
-        setAlertOpen(true)
+        // setAccount(account)
+        history.push("/account/" +account.id)
     }
 
     return (
@@ -181,16 +158,7 @@ function App() {
                     <Route path="/preferences">
                         <Preferences />
                     </Route>
-                    <Route path="/account">
-                        {account ?
-                            <Account
-                                account={account}
-                                accountSelected={accountSelected}
-                                saveAccount={saveAccount}
-                                saveContact={saveContact}
-                            /> :
-                            <Redirect to="/" />
-                        }
+                    <Route exact path="/account/:id" render={(props) => <Account {...props} loaded={accountLoaded}/>}>
                     </Route>
                     <Route path="/update-log">
                         <UpdateLog />
